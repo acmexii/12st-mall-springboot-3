@@ -29,7 +29,7 @@ public class PolicyHandler {
     //                     Inventory.decreaseStock(deliveryStarted);
     //                     break;
                         
-    //                 case "OrderCancelled":
+    //                 case "DeliveryCancelled":
     //                     DeliveryCancelled deliveryCancelled = objectMapper.readValue(message, DeliveryCancelled.class);
     //                     // Business Logic here;
     //                     Inventory.increaseStock(deliveryCancelled);
