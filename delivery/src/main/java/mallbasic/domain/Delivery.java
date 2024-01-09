@@ -1,13 +1,9 @@
 package mallbasic.domain;
 
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.Data;
 import mallbasic.DeliveryApplication;
-import mallbasic.domain.DeliveryCancelled;
-import mallbasic.domain.DeliveryStarted;
 
 @Entity
 @Table(name = "Delivery_table")
@@ -18,28 +14,17 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long orderId;
-
     private Long productId;
-
     private String userId;
-
     private String productName;
-
     private Integer qty;
-
     private String address;
-
     private String status;
-
     private Date deliveryDt;
 
     @PostUpdate
     public void onPostUpdate() {
-        DeliveryStarted deliveryStarted = new DeliveryStarted(this);
-        deliveryStarted.publishAfterCommit();
-
         DeliveryCancelled deliveryCancelled = new DeliveryCancelled(this);
         deliveryCancelled.publishAfterCommit();
     }
@@ -53,15 +38,16 @@ public class Delivery {
 
     //<<< Clean Arch / Port Method
     public static void startDelivery(OrderPlaced orderPlaced) {
-        //implement business logic here:
 
-        /** Example 1:  new item 
         Delivery delivery = new Delivery();
+        delivery.setOrderId(orderPlaced.getId());
+        delivery.setProductId(orderPlaced.getProductId());
+        delivery.setProductName(orderPlaced.getProductName());
+        delivery.setQty(orderPlaced.getQty());
         repository().save(delivery);
 
         DeliveryStarted deliveryStarted = new DeliveryStarted(delivery);
         deliveryStarted.publishAfterCommit();
-        */
 
         /** Example 2:  finding and process
         

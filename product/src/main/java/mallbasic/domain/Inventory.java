@@ -1,13 +1,8 @@
 package mallbasic.domain;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.Data;
 import mallbasic.ProductApplication;
-import mallbasic.domain.StockDecreased;
-import mallbasic.domain.StockIncreased;
 
 @Entity
 @Table(name = "Inventory_table")
@@ -18,9 +13,7 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String productName;
-
     private Integer stock;
 
     @PostUpdate

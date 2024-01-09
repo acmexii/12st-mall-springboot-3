@@ -1,58 +1,76 @@
 package mallbasic.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
-import mallbasic.config.kafka.KafkaProcessor;
-import mallbasic.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.Payload;
+import java.util.function.Consumer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-//<<< Clean Arch / Inbound Adaptor
+import mallbasic.domain.*;
+
 @Service
 @Transactional
 public class PolicyHandler {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    // @Bean
+    // public Consumer<String> consumer() {
+    //     return message -> {
+    //         System.out.println("■ Received message : " + message);
 
-    @Autowired
-    InventoryRepository inventoryRepository;
+    //         try {
+    //             JsonNode jsonNode = objectMapper.readTree(message);
+    //             String eventType = jsonNode.get("eventType").asText();
 
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
+    //             switch (eventType) {
+    //                 case "DeliveryStarted":
+    //                     DeliveryStarted deliveryStarted = objectMapper.readValue(message, DeliveryStarted.class);
+    //                     // Business Logic here;
+    //                     Inventory.decreaseStock(deliveryStarted);
+    //                     break;
+                        
+    //                 case "OrderCancelled":
+    //                     DeliveryCancelled deliveryCancelled = objectMapper.readValue(message, DeliveryCancelled.class);
+    //                     // Business Logic here;
+    //                     Inventory.increaseStock(deliveryCancelled);
+    //                     break;    
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='DeliveryStarted'"
-    )
-    public void wheneverDeliveryStarted_DecreaseStock(
-        @Payload DeliveryStarted deliveryStarted
-    ) {
-        DeliveryStarted event = deliveryStarted;
-        System.out.println(
-            "\n\n##### listener DecreaseStock : " + deliveryStarted + "\n\n"
-        );
+    //                 default:
+    //                     break;
+    //             }
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //         }
+    //     };
+    // } 
 
-        // Sample Logic //
-        Inventory.decreaseStock(event);
+    @Bean
+    public Consumer<String> consumer() {
+        return message -> {
+            System.out.println("■ Received message : " + message);
+
+            try {
+                JsonNode jsonNode = objectMapper.readTree(message);
+                String eventType = jsonNode.get("eventType").asText();
+
+                Class<?> eventClass = Class.forName("mallbasic.domain." + eventType);
+                Object eventObject = objectMapper.readValue(message, eventClass);
+
+                // Business Logic here;
+                processEvent(eventObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='DeliveryCancelled'"
-    )
-    public void wheneverDeliveryCancelled_IncreaseStock(
-        @Payload DeliveryCancelled deliveryCancelled
-    ) {
-        DeliveryCancelled event = deliveryCancelled;
-        System.out.println(
-            "\n\n##### listener IncreaseStock : " + deliveryCancelled + "\n\n"
-        );
-
-        // Sample Logic //
-        Inventory.increaseStock(event);
+    private void processEvent(Object event) {
+        if (event instanceof DeliveryStarted) {
+            Inventory.decreaseStock((DeliveryStarted) event);
+        } else if (event instanceof DeliveryCancelled) {
+            Inventory.increaseStock((DeliveryCancelled) event);
+        }
+        // Add more cases for other event types as needed
     }
+
 }
-//>>> Clean Arch / Inbound Adaptor

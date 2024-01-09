@@ -1,18 +1,19 @@
 package mallbasic.infra;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import mallbasic.OrderApplication;
-import mallbasic.config.kafka.KafkaProcessor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.util.MimeTypeUtils;
 
-//<<< Clean Arch / Outbound Adaptor
+@Getter
+@Setter
 public class AbstractEvent {
 
     String eventType;
@@ -29,16 +30,9 @@ public class AbstractEvent {
     }
 
     public void publish() {
-        /**
-         * spring streams 방식
-         */
-        KafkaProcessor processor = OrderApplication.applicationContext.getBean(
-            KafkaProcessor.class
-        );
-        MessageChannel outputChannel = processor.outboundTopic();
+        StreamBridge streamBridge = OrderApplication.applicationContext.getBean(StreamBridge.class)
 
-        outputChannel.send(
-            MessageBuilder
+        streamBridge.send("producer-out-0", MessageBuilder
                 .withPayload(this)
                 .setHeader(
                     MessageHeaders.CONTENT_TYPE,
@@ -50,34 +44,22 @@ public class AbstractEvent {
     }
 
     public void publishAfterCommit() {
-        TransactionSynchronizationManager.registerSynchronization(
-            new TransactionSynchronizationAdapter() {
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCompletion(int status) {
-                    AbstractEvent.this.publish();
+                    if (status == TransactionSynchronization.STATUS_COMMITTED) {
+                        AbstractEvent.this.publish();
+                    }
                 }
-            }
-        );
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
+            });
+        } else {
+            // No active transaction, publish immediately
+            AbstractEvent.this.publish();
+        }
     }
 
     public boolean validate() {
         return getEventType().equals(getClass().getSimpleName());
     }
 }
-//>>> Clean Arch / Outbound Adaptor

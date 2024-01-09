@@ -1,26 +1,39 @@
 package mallbasic.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
-import mallbasic.config.kafka.KafkaProcessor;
-import mallbasic.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.Payload;
+import java.util.function.Consumer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    OrderRepository orderRepository;
+    @Bean
+    public Consumer<String> consumer() {
+        return message -> {
+            System.out.println("■ Received message : " + message);
 
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
+            try {
+                JsonNode jsonNode = objectMapper.readTree(message);
+                String eventType = jsonNode.get("eventType").asText();
+
+                Class<?> eventClass = Class.forName("mallbasic.domain." + eventType);
+                Object eventObject = objectMapper.readValue(message, eventClass);
+
+                // Business Logic here;
+                processEvent(eventObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    private void processEvent(Object event) {
+        // Add more cases for other event types as needed
+    }
+
 }
-//>>> Clean Arch / Inbound Adaptor

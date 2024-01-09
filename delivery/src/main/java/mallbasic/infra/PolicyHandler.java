@@ -1,58 +1,45 @@
 package mallbasic.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
-import mallbasic.config.kafka.KafkaProcessor;
-import mallbasic.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.Payload;
+import java.util.function.Consumer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-//<<< Clean Arch / Inbound Adaptor
+import mallbasic.domain.*;
+
 @Service
 @Transactional
 public class PolicyHandler {
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    DeliveryRepository deliveryRepository;
+    @Bean
+    public Consumer<String> consumer() {
+        return message -> {
+            System.out.println("■ Received message : " + message);
 
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
+            try {
+                JsonNode jsonNode = objectMapper.readTree(message);
+                String eventType = jsonNode.get("eventType").asText();
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='OrderPlaced'"
-    )
-    public void wheneverOrderPlaced_StartDelivery(
-        @Payload OrderPlaced orderPlaced
-    ) {
-        OrderPlaced event = orderPlaced;
-        System.out.println(
-            "\n\n##### listener StartDelivery : " + orderPlaced + "\n\n"
-        );
+                Class<?> eventClass = Class.forName("mallbasic.domain." + eventType);
+                Object eventObject = objectMapper.readValue(message, eventClass);
 
-        // Sample Logic //
-        Delivery.startDelivery(event);
+                // Business Logic here;
+                processEvent(eventObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='OrderCancelled'"
-    )
-    public void wheneverOrderCancelled_CancelDelivery(
-        @Payload OrderCancelled orderCancelled
-    ) {
-        OrderCancelled event = orderCancelled;
-        System.out.println(
-            "\n\n##### listener CancelDelivery : " + orderCancelled + "\n\n"
-        );
-
-        // Sample Logic //
-        Delivery.cancelDelivery(event);
+    private void processEvent(Object event) {
+        if (event instanceof OrderPlaced) {
+            Delivery.startDelivery((OrderPlaced) event);
+        } else if (event instanceof OrderCancelled) {
+            Delivery.cancelDelivery((OrderCancelled) event);
+        }
+        // Add more cases for other event types as needed
     }
 }
-//>>> Clean Arch / Inbound Adaptor
