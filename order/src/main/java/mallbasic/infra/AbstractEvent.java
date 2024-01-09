@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mallbasic.OrderApplication;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -30,7 +29,7 @@ public class AbstractEvent {
     }
 
     public void publish() {
-        StreamBridge streamBridge = OrderApplication.applicationContext.getBean(StreamBridge.class)
+        StreamBridge streamBridge = OrderApplication.applicationContext.getBean(StreamBridge.class);
 
         streamBridge.send("producer-out-0", MessageBuilder
                 .withPayload(this)

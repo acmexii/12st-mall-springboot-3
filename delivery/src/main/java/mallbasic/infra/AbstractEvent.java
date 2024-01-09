@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mallbasic.DeliveryApplication;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
