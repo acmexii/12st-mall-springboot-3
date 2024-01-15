@@ -16,8 +16,10 @@ I want to utilize following techniques:
 
 
 SELF-CRITICISM: 
- - when you create pom.xml, USE correct parent project to spring boot 3
- - when you create pom.xml, you MUST specify the version: 3.1.3 ONLY for the spring-cloud-streams
+ - when you create pom.xml, USE correct parent project to spring boot 3.1.4
+ - when you create pom.xml, DO NOT missing data-rest dependency
+ - when you create pom.xml, you MUST specify the version: 2022.0.3 ONLY for the spring-cloud, 4.0.4 ONLY for the spring-cloud-streams in properties
+ - Also, in pom.xml, use 'mallbasic' as the groupId of this project and 'order' as the artifactId.
  - Please generate start from pom.xml
 
 
