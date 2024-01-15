@@ -38,57 +38,13 @@ public class Delivery {
 
     //<<< Clean Arch / Port Method
     public static void startDelivery(OrderPlaced orderPlaced) {
-
-        Delivery delivery = new Delivery();
-        delivery.setOrderId(orderPlaced.getId());
-        delivery.setProductId(orderPlaced.getProductId());
-        delivery.setProductName(orderPlaced.getProductName());
-        delivery.setQty(orderPlaced.getQty());
-        repository().save(delivery);
-
-        DeliveryStarted deliveryStarted = new DeliveryStarted(delivery);
-        deliveryStarted.publishAfterCommit();
-
-        /** Example 2:  finding and process
-        
-        repository().findById(orderPlaced.get???()).ifPresent(delivery->{
-            
-            delivery // do something
-            repository().save(delivery);
-
-            DeliveryStarted deliveryStarted = new DeliveryStarted(delivery);
-            deliveryStarted.publishAfterCommit();
-
-         });
-        */
+        //implement business logic here:       
 
     }
 
-    //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
     public static void cancelDelivery(OrderCancelled orderCancelled) {
         //implement business logic here:
-
-        /** Example 1:  new item 
-        Delivery delivery = new Delivery();
-        repository().save(delivery);
-
-        DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivery);
-        deliveryCancelled.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(orderCancelled.get???()).ifPresent(delivery->{
-            
-            delivery // do something
-            repository().save(delivery);
-
-            DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivery);
-            deliveryCancelled.publishAfterCommit();
-
-         });
-        */
 
     }
     //>>> Clean Arch / Port Method
