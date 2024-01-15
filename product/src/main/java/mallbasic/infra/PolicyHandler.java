@@ -16,8 +16,6 @@ public class PolicyHandler {
     // @Bean
     // public Consumer<String> consumer() {
     //     return message -> {
-    //         System.out.println("■ Received message : " + message);
-
     //         try {
     //             JsonNode jsonNode = objectMapper.readTree(message);
     //             String eventType = jsonNode.get("eventType").asText();
