@@ -21,8 +21,7 @@ SELF-CRITICISM:
  - when you create pom.xml, you MUST specify the version: 2022.0.3 ONLY for the spring-cloud, 4.0.4 ONLY for the spring-cloud-streams in properties
  - Also, in pom.xml, use 'mallbasic' as the groupId of this project and 'product' as the artifactId.
  - Please generate start from pom.xml
-
-Implement Business Logic in each Port Method within the Inventory domain class.
+ - Implement Business Logic in each Port Method within the Inventory domain class.
 when you create execution shell (run.sh), please add '--no-transfer-progress' option not to output transfer progress if there's mvn command:
 
 ```
