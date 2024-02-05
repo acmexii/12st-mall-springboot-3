@@ -61,8 +61,11 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     function: 
-      definition: consumer; producer
+      definition: whatever; producer
     stream:
+      function:      
+        bindings:
+          whatever-in-0: consumer-in-0
       kafka:
         bindings:
           configuration:

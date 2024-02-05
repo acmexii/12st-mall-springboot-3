@@ -4,40 +4,32 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.springframework.messaging.Message;
 import mallbasic.domain.*;
 
 @Service
 @Transactional
 public class PolicyHandler {
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Bean
-    public Consumer<String> consumer() {
+    public Consumer<Message<OrderPlaced>> wheneverOrderPlaced_StartDelivery() {
         return message -> {
-            try {
-                JsonNode jsonNode = objectMapper.readTree(message);
-                String eventType = jsonNode.get("eventType").asText();
+            OrderPlaced orderPlaced = message.getPayload();
+            System.out.println("\n\n##### listener StartDelivery : " + orderPlaced + "\n\n");
 
-                Class<?> eventClass = Class.forName("mallbasic.domain." + eventType);
-                Object eventObject = objectMapper.readValue(message, eventClass);
-
-                // Business Logic here;
-                processEvent(eventObject);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // Sample Logic //
+            Delivery.startDelivery(orderPlaced);
         };
     }
 
-    private void processEvent(Object event) {
-        if (event instanceof OrderPlaced) {
-            Delivery.startDelivery((OrderPlaced) event);
-        } else if (event instanceof OrderCancelled) {
-            Delivery.cancelDelivery((OrderCancelled) event);
-        }
-        // Add more cases for other event types as needed
+    @Bean
+    public Consumer<Message<OrderCancelled>> wheneverOrderCancelled_CancelDelivery() {
+        return message -> {
+            OrderCancelled orderCancelled = message.getPayload();
+            System.out.println("\n\n##### listener CancelDelivery : " + orderCancelled + "\n\n");
+
+            // Sample Logic //
+            Delivery.cancelDelivery(orderCancelled);
+        };
     }
 }
