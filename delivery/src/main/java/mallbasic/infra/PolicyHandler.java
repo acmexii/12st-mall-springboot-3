@@ -13,22 +13,18 @@ public class PolicyHandler {
 
     @Bean
     public Consumer<Message<OrderPlaced>> wheneverOrderPlaced_StartDelivery() {
-        return message -> {
-            OrderPlaced orderPlaced = message.getPayload();
-            System.out.println("\n\n##### listener StartDelivery : " + orderPlaced + "\n\n");
-
-            // Sample Logic //
+        return (event) -> {
+            System.out.println("\n\n##### listener Start Delivery : " + event + "\n\n");
+            OrderPlaced orderPlaced = event.getPayload();
             Delivery.startDelivery(orderPlaced);
         };
     }
 
     @Bean
     public Consumer<Message<OrderCancelled>> wheneverOrderCancelled_CancelDelivery() {
-        return message -> {
-            OrderCancelled orderCancelled = message.getPayload();
-            System.out.println("\n\n##### listener CancelDelivery : " + orderCancelled + "\n\n");
-
-            // Sample Logic //
+        return (event) -> {
+            System.out.println("\n\n##### listener Cancel Delivery : " + event + "\n\n");
+            OrderCancelled orderCancelled = event.getPayload();
             Delivery.cancelDelivery(orderCancelled);
         };
     }
