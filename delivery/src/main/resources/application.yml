@@ -21,7 +21,7 @@ spring:
           destination: mallbasic
           contentType: application/json
           consumer:
-            condition: "headers['type']=='OrderCancelled'"
+            condition: "headers['type']=='OrderPlaced'"
         wheneverOrderCancelled_CancelDelivery-in-0:
           group: delivery
           destination: mallbasic
