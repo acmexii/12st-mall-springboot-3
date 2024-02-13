@@ -14,14 +14,14 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: localhost:9092        
+          brokers: localhost:9092
       bindings:
         wheneverOrderPlaced_StartDelivery-in-0:
           group: delivery
           destination: mallbasic
           contentType: application/json
           consumer:
-            condition: "headers['type']=='OrderPlaced'"
+            condition: "headers['type']=='OrderCancelled'"
         wheneverOrderCancelled_CancelDelivery-in-0:
           group: delivery
           destination: mallbasic
