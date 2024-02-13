@@ -56,6 +56,27 @@ public class Delivery {
     public static void cancelDelivery(OrderCancelled orderCancelled) {
         //implement business logic here:
 
+        /** Example 1:  new item 
+        Delivery delivery = new Delivery();
+        repository().save(delivery);
+
+        DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivery);
+        deliveryCancelled.publishAfterCommit();
+        */
+
+        /** Example 2:  finding and process
+        
+        repository().findById(orderCancelled.get???()).ifPresent(delivery->{
+            
+            delivery // do something
+            repository().save(delivery);
+
+            DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivery);
+            deliveryCancelled.publishAfterCommit();
+
+         });
+        */
+
     }
     //>>> Clean Arch / Port Method
 

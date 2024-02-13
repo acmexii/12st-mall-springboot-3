@@ -13,22 +13,20 @@ public class PolicyHandler {
 
     @Bean
     public Consumer<Message<DeliveryStarted>> wheneverDeliveryStarted_DescreaseStock() {
-        return message -> {
-            DeliveryStarted deliveryStarted = message.getPayload();
-            System.out.println("\n\n##### listener DecreaseStock : " + deliveryStarted + "\n\n");
+        return event -> {
+            if (!AbstractEvent.isMe(event, "DeliveryStarted")) return;
 
-            // Sample Logic //
+            DeliveryStarted deliveryStarted = event.getPayload();
             Inventory.decreaseStock(deliveryStarted);
         };
     }
 
     @Bean
     public Consumer<Message<DeliveryCancelled>> wheneverDeliveryCancelled_IncreaseStock() {
-        return message -> {
-            DeliveryCancelled deliveryCancelled = message.getPayload();
-            System.out.println("\n\n##### listener IncreaseStock : " + deliveryCancelled + "\n\n");
+        return event -> {
+            if (!AbstractEvent.isMe(event, "DeliveryCancelled")) return;
 
-            // Sample Logic //
+            DeliveryCancelled deliveryCancelled = event.getPayload();
             Inventory.increaseStock(deliveryCancelled);
         };
     }

@@ -6,6 +6,7 @@ import mallbasic.ProductApplication;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -61,5 +62,11 @@ public class AbstractEvent {
 
     public boolean validate() {
         return getEventType().equals(getClass().getSimpleName());
+    }
+
+    public static boolean isMe(Message<?> message, String type) {
+        MessageHeaders headers = message.getHeaders();
+        String eventType = headers.get("type", String.class);
+        return type.equals(eventType);
     }
 }

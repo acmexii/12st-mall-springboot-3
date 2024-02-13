@@ -20,27 +20,22 @@ spring:
     function:      
       definition: wheneverDeliveryStarted_DescreaseStock;wheneverDeliveryCancelled_IncreaseStock;producer      
     stream:
-      function:      
-        bindings:
-          wheneverDeliveryStarted_DescreaseStock-in-0: consumer-in-0
-          wheneverDeliveryCancelled_IncreaseStock-in-0: consumer-in-0                
       kafka:
-        bindings:
-          configuration:
-            default:
-              key:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-              value:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         binder:
-          brokers: localhost:9092                          
+          brokers: localhost:9092
       bindings:
-        consumer-in-0:
+        wheneverDeliveryStarted_DescreaseStock-in-0:
           group: product
           destination: mallbasic
-          consumer:
-            condition: "headers['type']=='DeliveryStarted' || headers['type']=='DeliveryCancelled'"
           contentType: application/json
+          consumer:
+            condition: "headers['type']=='DeliveryStarted'"
+        wheneverDeliveryCancelled_IncreaseStock-in-0:
+          group: product
+          destination: mallbasic
+          contentType: application/json
+          consumer:
+            condition: "headers['type']=='DeliveryCancelled'"            
         producer-out-0:
           destination: mallbasic
           contentType: application/json
@@ -66,26 +61,26 @@ spring:
         format_sql: true
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
-    function: 
-      definition: consumer; producer
+    function:      
+      definition: wheneverDeliveryStarted_DescreaseStock;wheneverDeliveryCancelled_IncreaseStock;producer      
     stream:
       kafka:
-        bindings:
-          configuration:
-            default:
-              key:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-              value:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         binder:
-          brokers: my-kafka:9092                          
+          brokers: localhost:9092
       bindings:
-        consumer-in-0:
+        wheneverDeliveryStarted_DescreaseStock-in-0:
           group: product
           destination: mallbasic
           contentType: application/json
+          consumer:
+            condition: "headers['type']=='DeliveryStarted'"
+        wheneverDeliveryCancelled_IncreaseStock-in-0:
+          group: product
+          destination: mallbasic
+          contentType: application/json
+          consumer:
+            condition: "headers['type']=='DeliveryCancelled'"            
         producer-out-0:
           destination: mallbasic
           contentType: application/json
-
 

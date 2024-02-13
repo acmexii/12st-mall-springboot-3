@@ -16,15 +16,6 @@ public class Inventory {
     private String productName;
     private Integer stock;
 
-    @PostUpdate
-    public void onPostUpdate() {
-        StockDecreased stockDecreased = new StockDecreased(this);
-        stockDecreased.publishAfterCommit();
-
-        StockIncreased stockIncreased = new StockIncreased(this);
-        stockIncreased.publishAfterCommit();
-    }
-
     public static InventoryRepository repository() {
         InventoryRepository inventoryRepository = ProductApplication.applicationContext.getBean(
             InventoryRepository.class
@@ -36,11 +27,40 @@ public class Inventory {
     public static void decreaseStock(DeliveryStarted deliveryStarted) {
         //implement business logic here:
 
+        repository().findById(deliveryStarted.getProductId()).ifPresent(inventory->{
+            inventory.setStock(inventory.getStock() - deliveryStarted.getQty()); // do something
+            repository().save(inventory);
+
+            StockDecreased stockDecreased = new StockDecreased(inventory);
+            stockDecreased.publishAfterCommit();
+         });
+
     }
 
     //<<< Clean Arch / Port Method
     public static void increaseStock(DeliveryCancelled deliveryCancelled) {
         //implement business logic here:
+
+        /** Example 1:  new item 
+        Inventory inventory = new Inventory();
+        repository().save(inventory);
+
+        StockIncreased stockIncreased = new StockIncreased(inventory);
+        stockIncreased.publishAfterCommit();
+        */
+
+        /** Example 2:  finding and process
+        
+        repository().findById(deliveryCancelled.get???()).ifPresent(inventory->{
+            
+            inventory // do something
+            repository().save(inventory);
+
+            StockIncreased stockIncreased = new StockIncreased(inventory);
+            stockIncreased.publishAfterCommit();
+
+         });
+        */
 
     }
     //>>> Clean Arch / Port Method

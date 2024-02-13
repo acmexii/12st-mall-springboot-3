@@ -18,23 +18,13 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     function: 
-      definition: whatever;producer;
+      definition: whatever;producer
     stream:
-      function:      
-        bindings:
-          whatever-in-0: consumer-in-0
       kafka:
-        bindings:
-          configuration:
-            default:
-              key:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-              value:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         binder:
           brokers: localhost:9092                          
       bindings:
-        consumer-in-0:
+        whatever-in-0:
           group: order
           destination: mallbasic
           contentType: application/json
@@ -65,16 +55,10 @@ spring:
   cloud:
     function: 
       definition: whatever;producer
+    stream:
       kafka:
-        bindings:
-          configuration:
-            default:
-              key:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-              value:
-                serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         binder:
-          brokers: my-kafka:9092                          
+          brokers: localhost:9092                          
       bindings:
         whatever-in-0:
           group: order

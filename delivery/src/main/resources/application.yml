@@ -34,5 +34,33 @@ spring:
 server:
   port: 8083
 
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  cloud:
+    function: 
+      definition: wheneverOrderPlaced_StartDelivery;wheneverOrderCancelled_CancelDelivery;producer
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        wheneverOrderPlaced_StartDelivery-in-0:
+          group: delivery
+          destination: mallbasic
+          contentType: application/json
+          consumer:
+            condition: "headers['type']=='OrderCancelled'"
+        wheneverOrderCancelled_CancelDelivery-in-0:
+          group: delivery
+          destination: mallbasic
+          contentType: application/json
+          consumer:
+            condition: "headers['type']=='OrderCancelled'"            
+        producer-out-0:
+          destination: mallbasic
+          contentType: application/json
 
 
