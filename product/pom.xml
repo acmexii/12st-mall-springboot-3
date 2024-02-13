@@ -58,7 +58,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream</artifactId>
-            <!-- <version>4.0.4</version> -->
         </dependency>
 
         <!-- Spring Cloud Stream Binder for Kafka -->

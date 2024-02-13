@@ -21,12 +21,14 @@ spring:
           destination: mallbasic
           contentType: application/json
           consumer:
+            headerMode: headers
             condition: "headers['type']=='OrderPlaced'"
         wheneverOrderCancelled_CancelDelivery-in-0:
           group: delivery
           destination: mallbasic
           contentType: application/json
           consumer:
+            headerMode: headers          
             condition: "headers['type']=='OrderCancelled'"            
         producer-out-0:
           destination: mallbasic
