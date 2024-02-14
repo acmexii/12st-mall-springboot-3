@@ -12,6 +12,14 @@ import mallbasic.domain.*;
 public class PolicyHandler {
 
     @Bean
+    public Consumer<Message<?>> discardFunction() {
+        return message -> {
+            // Ingore unnecessary message
+            System.out.println("Discarded message: " + message);
+        };
+    }
+    
+    @Bean
     public Consumer<Message<DeliveryStarted>> wheneverDeliveryStarted_DescreaseStock() {
         return event -> {
             DeliveryStarted deliveryStarted = event.getPayload();

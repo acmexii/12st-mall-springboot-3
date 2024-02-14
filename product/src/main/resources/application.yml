@@ -16,7 +16,7 @@ spring:
           implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      routing-expression: "headers['type']=='DeliveryStarted' ? 'wheneverDeliveryStarted_DescreaseStock' : headers['type']=='DeliveryCancelled' ? 'wheneverDeliveryCancelled_IncreaseStock' : null"
+      routing-expression: "headers['type']=='DeliveryStarted' ? 'wheneverDeliveryStarted_DescreaseStock' : headers['type']=='DeliveryCancelled' ? 'wheneverDeliveryCancelled_IncreaseStock' : 'discardFunction'"
     stream:
       kafka:
         binder:
@@ -50,7 +50,7 @@ spring:
           implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      routing-expression: "headers['type']=='DeliveryStarted' ? 'wheneverDeliveryStarted_DescreaseStock' : headers['type']=='DeliveryCancelled' ? 'wheneverDeliveryCancelled_IncreaseStock' : null"
+      routing-expression: "headers['type']=='DeliveryStarted' ? 'wheneverDeliveryStarted_DescreaseStock' : headers['type']=='DeliveryCancelled' ? 'wheneverDeliveryCancelled_IncreaseStock' : 'discardFunction'"
     stream:
       kafka:
         binder:

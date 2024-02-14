@@ -11,8 +11,11 @@ import org.springframework.messaging.Message;
 public class PolicyHandler {
 
     @Bean
-    public Consumer<Message<String>> whatever() {
-        return message -> {};
+    public Consumer<Message<?>> discardFunction() {
+        return message -> {
+            // Ingore unnecessary message
+            System.out.println("Discarded message: " + message);
+        };
     }
 
 }

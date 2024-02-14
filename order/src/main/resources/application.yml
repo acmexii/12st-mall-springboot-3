@@ -18,19 +18,19 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     function: 
-      definition: whatever;producer
+      routing-expression: "'discardFunction'"
     stream:
       kafka:
         binder:
           brokers: localhost:9092                          
       bindings:
-        whatever-in-0:
-          group: order
-          destination: mallbasic
-          contentType: application/json
-        producer-out-0:
-          destination: mallbasic
-          contentType: application/json
+          functionRouter-in-0:              
+            group: order
+            destination: mallbasic
+            contentType: application/json        
+          producer-out-0:
+            destination: mallbasic
+            contentType: application/json
 logging:
   level:
     org.hibernate.type: trace
@@ -54,18 +54,18 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     function: 
-      definition: whatever;producer
+      routing-expression: "'discardFunction'"
     stream:
       kafka:
         binder:
-          brokers: localhost:9092                          
+          brokers: my-kafka:9092                          
       bindings:
-        whatever-in-0:
-          group: order
-          destination: mallbasic
-          contentType: application/json
-        producer-out-0:
-          destination: mallbasic
-          contentType: application/json
+          functionRouter-in-0:              
+            group: order
+            destination: mallbasic
+            contentType: application/json  
+          producer-out-0:
+            destination: mallbasic
+            contentType: application/json
 
 

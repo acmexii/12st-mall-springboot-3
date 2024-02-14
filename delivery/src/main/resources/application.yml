@@ -5,7 +5,7 @@ spring:
     name: delivery
 ---
 spring:
-  config:
+  config: 
     activate:
       on-profile: default
   jpa:
@@ -16,7 +16,7 @@ spring:
           implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : null"
+      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : 'discardFunction'"
     stream:
       kafka:
         binder:
@@ -50,7 +50,7 @@ spring:
           implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : null"
+      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : 'discardFunction'"
     stream:
       kafka:
         binder:
