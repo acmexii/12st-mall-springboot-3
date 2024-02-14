@@ -8,31 +8,32 @@ spring:
   config:
     activate:
       on-profile: default
+  jpa:
+      properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+          implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      definition: wheneverOrderPlaced_StartDelivery;wheneverOrderCancelled_CancelDelivery;producer
+      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : null"
     stream:
       kafka:
         binder:
           brokers: localhost:9092
       bindings:
-        wheneverOrderPlaced_StartDelivery-in-0:
-          group: delivery
-          destination: mallbasic
-          contentType: application/json
-          consumer:
-            headerMode: headers
-            condition: "headers['type']=='OrderPlaced'"
-        wheneverOrderCancelled_CancelDelivery-in-0:
-          group: delivery
-          destination: mallbasic
-          contentType: application/json
-          consumer:
-            headerMode: headers          
-            condition: "headers['type']=='OrderCancelled'"            
-        producer-out-0:
-          destination: mallbasic
-          contentType: application/json
+          functionRouter-in-0:              
+            group: delivery
+            destination: mallbasic
+            contentType: application/json            
+          producer-out-0:
+            destination: mallbasic
+            contentType: application/json
+logging:
+  level:
+    org.hibernate.type: trace
+    org.springframework.cloud: debug
+
 server:
   port: 8083
 
@@ -41,28 +42,26 @@ spring:
   config:
     activate:
       on-profile: docker
+  jpa:
+      properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+          implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl      
   cloud:
     function: 
-      definition: wheneverOrderPlaced_StartDelivery;wheneverOrderCancelled_CancelDelivery;producer
+      routing-expression: "headers['type']=='OrderPlaced' ? 'wheneverOrderPlaced_StartDelivery' : headers['type']=='OrderCancelled' ? 'wheneverOrderCancelled_CancelDelivery' : null"
     stream:
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: my-kafka:9092
       bindings:
-        wheneverOrderPlaced_StartDelivery-in-0:
-          group: delivery
-          destination: mallbasic
-          contentType: application/json
-          consumer:
-            condition: "headers['type']=='OrderCancelled'"
-        wheneverOrderCancelled_CancelDelivery-in-0:
-          group: delivery
-          destination: mallbasic
-          contentType: application/json
-          consumer:
-            condition: "headers['type']=='OrderCancelled'"            
-        producer-out-0:
-          destination: mallbasic
-          contentType: application/json
+          functionRouter-in-0:              
+            group: delivery
+            destination: mallbasic
+            contentType: application/json            
+          producer-out-0:
+            destination: mallbasic
+            contentType: application/json
 
 

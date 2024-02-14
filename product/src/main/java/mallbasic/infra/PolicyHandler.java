@@ -14,8 +14,6 @@ public class PolicyHandler {
     @Bean
     public Consumer<Message<DeliveryStarted>> wheneverDeliveryStarted_DescreaseStock() {
         return event -> {
-            if (!AbstractEvent.isMe(event, "DeliveryStarted")) return;
-
             DeliveryStarted deliveryStarted = event.getPayload();
             Inventory.decreaseStock(deliveryStarted);
         };
@@ -24,8 +22,6 @@ public class PolicyHandler {
     @Bean
     public Consumer<Message<DeliveryCancelled>> wheneverDeliveryCancelled_IncreaseStock() {
         return event -> {
-            if (!AbstractEvent.isMe(event, "DeliveryCancelled")) return;
-
             DeliveryCancelled deliveryCancelled = event.getPayload();
             Inventory.increaseStock(deliveryCancelled);
         };

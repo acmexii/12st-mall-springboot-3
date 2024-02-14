@@ -61,9 +61,4 @@ public class AbstractEvent {
         return getEventType().equals(getClass().getSimpleName());
     }
 
-    public static boolean isMe(Message<?> message, String type) {
-        MessageHeaders headers = message.getHeaders();
-        String eventType = headers.get("type", String.class);
-        return type.equals(eventType);
-    }
 }

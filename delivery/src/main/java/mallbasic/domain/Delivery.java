@@ -23,12 +23,6 @@ public class Delivery {
     private String status;
     private Date deliveryDt;
 
-    @PostUpdate
-    public void onPostUpdate() {
-        DeliveryCancelled deliveryCancelled = new DeliveryCancelled(this);
-        deliveryCancelled.publishAfterCommit();
-    }
-
     public static DeliveryRepository repository() {
         DeliveryRepository deliveryRepository = DeliveryApplication.applicationContext.getBean(
             DeliveryRepository.class
@@ -64,18 +58,18 @@ public class Delivery {
         deliveryCancelled.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process
+        /** Example 2:  finding and process*/
         
-        repository().findById(orderCancelled.get???()).ifPresent(delivery->{
+        repository().findByOrderId(orderCancelled.getId()).ifPresent(delivery->{
             
-            delivery // do something
+            delivery.setStatus(DeliveryCancelled.class.getSimpleName()); // do something
             repository().save(delivery);
 
             DeliveryCancelled deliveryCancelled = new DeliveryCancelled(delivery);
             deliveryCancelled.publishAfterCommit();
 
          });
-        */
+        
 
     }
     //>>> Clean Arch / Port Method
