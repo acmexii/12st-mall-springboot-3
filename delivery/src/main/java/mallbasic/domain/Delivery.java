@@ -58,8 +58,6 @@ public class Delivery {
         deliveryCancelled.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process*/
-        
         repository().findByOrderId(orderCancelled.getId()).ifPresent(delivery->{
             
             delivery.setStatus(DeliveryCancelled.class.getSimpleName()); // do something

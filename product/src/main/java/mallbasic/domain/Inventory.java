@@ -28,40 +28,25 @@ public class Inventory {
         //implement business logic here:
 
         repository().findById(deliveryStarted.getProductId()).ifPresent(inventory->{
-            inventory.setStock(inventory.getStock() - deliveryStarted.getQty()); // do something
+            inventory.setStock(inventory.getStock() - deliveryStarted.getQty()); 
             repository().save(inventory);
 
             StockDecreased stockDecreased = new StockDecreased(inventory);
             stockDecreased.publishAfterCommit();
          });
-
     }
 
     //<<< Clean Arch / Port Method
     public static void increaseStock(DeliveryCancelled deliveryCancelled) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Inventory inventory = new Inventory();
-        repository().save(inventory);
-
-        StockIncreased stockIncreased = new StockIncreased(inventory);
-        stockIncreased.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(deliveryCancelled.get???()).ifPresent(inventory->{
+        repository().findById(deliveryCancelled.getProductId()).ifPresent(inventory->{
             
-            inventory // do something
+            inventory.setStock(inventory.getStock() - deliveryCancelled.getQty()); 
             repository().save(inventory);
 
             StockIncreased stockIncreased = new StockIncreased(inventory);
             stockIncreased.publishAfterCommit();
 
          });
-        */
-
     }
     //>>> Clean Arch / Port Method
 
